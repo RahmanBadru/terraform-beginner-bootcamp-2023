@@ -114,3 +114,50 @@ if it is successful, you should see something like this:
 ```
 
 We'll need to generate AWS Credentials for IAM USer in order to use aws cli
+
+## Terraform Basics
+
+### Terraform Registry
+
+Terraform sources their provider and modules from the terraform registry which is located at [registry.terraform.io](https://registry.terraform.io) 
+
+- **Providers** is an interface to APIs that will allow to create resources in terraform.
+- **Modules** are a way to make large amounts of terraform code modular,portable and sharable.
+
+[Random Terraform Provider](https://registry.terraform.io/providers/hashicorp/random)
+
+### Terraform console.
+
+We can see a list of all the terraform commands by simply typing `terraform`
+
+### Terraform Init
+
+At the start of a new project , we will run `terraform init` to download the binaries for the terraform providers that we'll use in this project.
+
+### Terraform Plan
+`terraform plan`
+This will generate out a changeset about the state of our infrastructure and what will be changed.
+
+You can output this "changeset" to be passed to an apply, but you can just ignore outputting.
+
+### Terraform Apply
+`terraform apply`
+
+This will run a plan and pass the changeset to be executed. Apply should prompt yes or no.
+
+if you want to automatically approve and apply, you can use the --auto-approve flag. e.g `terraform apply --auto-approve`
+
+### Terraform lock file
+`.terraform.lock.hcl` contains locked versioning for providers to be used in this project. it should be committed to your version control system e.g github
+
+### Terraform state file
+
+`terraform.tfstate` contains information about the current state of your infrastructure.
+**This should not be committed to version control.** This file can contain sensistive data
+If you lose this file, you lose knowing the state of your infrastructure.
+
+`terraform.tfstate.backup` is the previous statefile state
+
+### Terraform Directory
+
+`.terraform` directory contains binaries of terraform providers.
