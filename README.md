@@ -195,3 +195,5 @@ Then provide the following code.
     }
 }
 ```
+
+We have automated the workaround using the following bash script [/bin/generate_tfrc_credentials.sh](/bin/generate_tfrc_credentials.sh)
