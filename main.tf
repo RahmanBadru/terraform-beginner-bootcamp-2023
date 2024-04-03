@@ -1,10 +1,10 @@
 terraform {
-#   cloud {
-#     organization = "example-org-f8e12b"
-#     workspaces {
-#       name = "terra-house-sports"
-#     }
-#   }
+  cloud {
+    organization = "example-org-f8e12b"
+    workspaces {
+      name = "terraform-cloud"
+    }
+  }
 }
 
 module "terrahouse_aws" {
