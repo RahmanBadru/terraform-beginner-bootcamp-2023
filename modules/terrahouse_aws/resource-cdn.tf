@@ -2,8 +2,8 @@
 ## https://aws.amazon.com/blogs/networking-and-content-delivery/amazon-cloudfront-introduces-origin-access-control-oac/
 
 resource "aws_cloudfront_origin_access_control" "default" {
-  name = "OAC ${var.bucket_name}"
-  description = "Origin Access Control for static website hosting ${var.bucket_name}"
+  name = "OAC ${aws_s3_bucket.website_bucket.bucket}"
+  description = "Origin Access Control for static website hosting ${aws_s3_bucket.website_bucket.bucket}"
   origin_access_control_origin_type = "s3"
   signing_behavior = "always"
   signing_protocol = "sigv4"
@@ -24,7 +24,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "Static website hosting for: ${var.bucket_name}"
+  comment             = "Static website hosting for: ${aws_s3_bucket.website_bucket.bucket}"
   default_root_object = "index.html"
 
 
