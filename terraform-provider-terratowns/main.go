@@ -1,6 +1,5 @@
-// package main: Declares the package name.
+// package main: Declares the package name. 
 // The main package is special in Go, it's where the execution of the program starts.
-
 package main
 
 // fmt is short format, it contains functions for formatted I/O.
@@ -9,21 +8,21 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"fmt"
 	"log"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 )
-
-// func main(): Defines the main function, the entry point of the app.
+// func main(): Defines the main function, the entry point of the app. 
 // When you run the program, it starts executing from this function.
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
 		ProviderFunc: Provider,
 	})
-	//Format.PrintLine
+	// Format.PrintLine
+	// Prints to standard output
 	fmt.Println("Hello, world!")
 }
 
@@ -33,29 +32,29 @@ type Config struct {
 	UserUuid string
 }
 
-// in golang a titlecase function will get exported
+// in golang, a titlecase function will get exported.
 func Provider() *schema.Provider {
 	var p *schema.Provider
 	p = &schema.Provider{
-		ResourcesMap: map[string]*schema.Resource{
+		ResourcesMap:  map[string]*schema.Resource{
 			"terratowns_home": Resource(),
 		},
-		DataSourcesMap: map[string]*schema.Resource{
+		DataSourcesMap:  map[string]*schema.Resource{
 
 		},
 		Schema: map[string]*schema.Schema{
 			"endpoint": {
 				Type: schema.TypeString,
 				Required: true,
-				Description: "The endpoint for the external service",
+				Description: "The endpoint for hte external service",
 			},
 			"token": {
 				Type: schema.TypeString,
-				Sensitive: true, // make the token to be sensitive to hide in the logs
+				Sensitive: true, // make the token as sensitive to hide it the logs
 				Required: true,
 				Description: "Bearer token for authorization",
 			},
-			"user_uuid" : {
+			"user_uuid": {
 				Type: schema.TypeString,
 				Required: true,
 				Description: "UUID for configuration",
@@ -188,7 +187,6 @@ func resourceHouseCreate(ctx context.Context, d *schema.ResourceData, m interfac
 	return diags
 }
 
-
 func resourceHouseRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	log.Print("resourceHouseRead:start")
 	var diags diag.Diagnostics
@@ -228,7 +226,7 @@ func resourceHouseRead(ctx context.Context, d *schema.ResourceData, m interface{
 		d.Set("description",responseData["description"].(string))
 		d.Set("domain_name",responseData["domain_name"].(string))
 		d.Set("content_version",responseData["content_version"].(float64))
-	} else if resp.StatusCode != http.StatusNotFound {
+	} else if resp.StatusCode == http.StatusNotFound {
 		d.SetId("")
 	} else if resp.StatusCode != http.StatusOK {
 		return diag.FromErr(fmt.Errorf("failed to read home resource, status_code: %d, status: %s, body %s", resp.StatusCode, resp.Status, responseData))
@@ -277,9 +275,15 @@ func resourceHouseUpdate(ctx context.Context, d *schema.ResourceData, m interfac
 	}
 	defer resp.Body.Close()
 
+	// parse response JSON
+	var responseData map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&responseData);  err != nil {
+		return diag.FromErr(err)
+	}
+
 	// StatusOK = 200 HTTP Response Code
 	if resp.StatusCode != http.StatusOK {
-		return diag.FromErr(fmt.Errorf("failed to update home resource, status_code: %d, status: %s", resp.StatusCode, resp.Status))
+		return diag.FromErr(fmt.Errorf("failed to update home resource, status_code: %d, status: %s, body %s", resp.StatusCode, resp.Status, responseData))
 	}
 
 	log.Print("resourceHouseUpdate:end")
